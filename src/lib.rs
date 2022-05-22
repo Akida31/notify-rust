@@ -92,7 +92,7 @@
 //! |  `fn hint(...)`     |  ✔︎    | ❌    | ❌    |
 //! |  `fn timeout(...)`  |  ✔︎    |       |  ✔︎    |
 //! |  `fn urgency(...)`  |  ✔︎    | ❌    | ❌    |
-//! |  `fn action(...)`   |  ✔︎    |       |        |
+//! |  `fn action(...)`   |  ✔︎    |       |  ✔︎     |
 //! |  `fn id(...)`       |  ✔︎    |       |        |
 //! |  `fn finalize(...)` |  ✔︎    | ✔︎     |  ✔︎    |
 //! |  `fn show(...)`     |  ✔︎    | ✔︎     |  ✔︎    |
@@ -101,7 +101,7 @@
 //!
 //! | method                   | XDG | macOS | windows |
 //! |--------------------------|-----|-------|---------|
-//! | `fn wait_for_action(...)`|  ✔︎  |  ❌  |   ❌   |
+//! | `fn wait_for_action(...)`|  ✔︎  |  ❌  |   ✔︎   |
 //! | `fn close(...)`          |  ✔︎  |  ❌  |   ❌   |
 //! | `fn on_close(...)`       |  ✔︎  |  ❌  |   ❌   |
 //! | `fn update(...)`         |  ✔︎  |  ❌  |   ❌   |
@@ -172,6 +172,9 @@ pub use crate::xdg::{
     CloseHandler,
     CloseReason,
 };
+
+#[cfg(windows)]
+pub use crate::windows::{Action, NotificationHandle};
 
 #[cfg(all(feature = "server", unix, not(target_os = "macos")))]
 pub use crate::xdg::stop_server;

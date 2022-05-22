@@ -75,6 +75,7 @@ pub struct Notification {
     #[cfg(target_os="windows")] pub(crate) sound_name: Option<String>,
     #[cfg(target_os="windows")] pub(crate) path_to_image: Option<String>,
     #[cfg(target_os="windows")] pub(crate) app_id: Option<String>,
+    #[cfg(target_os="windows")] pub(crate) header: Option<String>,
     /// Lifetime of the Notification in ms. Often not respected by server, sorry.
     pub timeout: Timeout, // both gnome and galago want allow for -1
 
@@ -142,6 +143,13 @@ impl Notification {
     #[cfg(target_os="windows")]
     pub fn app_id(&mut self, app_id: &str) -> &mut Notification {
         self.app_id = Some(app_id.to_string());
+        self
+    }
+
+    /// Header to group notifications
+    #[cfg(target_os="windows")]
+    pub fn header(&mut self, header: &str) -> &mut Notification {
+        self.header = Some(header.to_string());
         self
     }
 
@@ -297,7 +305,7 @@ impl Notification {
     /// There is nothing fancy going on here yet.
     /// **Careful! This replaces the internal list of actions!**
     ///
-    /// (xdg only)
+    /// (xdg and windows only)
     #[deprecated(note = "please use .action() only")]
     pub fn actions(&mut self, actions: Vec<String>) -> &mut Notification {
         self.actions = actions;
@@ -308,7 +316,7 @@ impl Notification {
     ///
     /// This adds a single action to the internal list of actions.
     ///
-    /// (xdg only)
+    /// (xdg and windows only)
     pub fn action(&mut self, identifier: &str, label: &str) -> &mut Notification {
         self.actions.push(identifier.to_owned());
         self.actions.push(label.to_owned());
@@ -374,7 +382,7 @@ impl Notification {
     /// Returns an `Ok` no matter what, since there is currently no way of telling the success of
     /// the notification.
     #[cfg(target_os = "windows")]
-    pub fn show(&self) -> Result<()> {
+    pub fn show(&self) -> Result<windows::NotificationHandle> {
         windows::show_notification(self)
     }
 
@@ -438,7 +446,8 @@ impl Default for Notification {
             sound_name:    Default::default(),
             id:            None,
             path_to_image: None,
-            app_id:        None
+            app_id:        None,
+            header:        None,
         }
     }
 }

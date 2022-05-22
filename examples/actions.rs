@@ -1,9 +1,30 @@
 #![allow(unused_imports)]
 use notify_rust::{Hint, Notification};
+#[cfg(windows)]
+use notify_rust::Action;
 
 #[cfg(windows)]
 fn main() {
-    println!("this is a unix only feature");
+    Notification::new()
+        .summary("click me")
+        .action("default", "default")    // IDENTIFIER, LABEL
+        .action("clicked_a", "button a") // IDENTIFIER, LABEL
+        .action("clicked_b", "button b") // IDENTIFIER, LABEL
+        .show()
+        .unwrap()
+        .wait_for_action(|action|
+            match action {
+                Action::Activate(val) => match &*val {
+                    "default"  => println!("default"),
+                    "clicked_a"  => println!("clicked a"),
+                    "clicked_b"  => println!("clicked b"),
+                    _ => ()
+                }
+                Action::Close => println!("the notification was closed"),
+                Action::Fail => println!("notification failure"),
+                _ => ()
+            }
+        );
 }
 
 #[cfg(unix)]
